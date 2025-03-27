@@ -15,12 +15,13 @@ class TranslatorThread(QThread):
     finished = pyqtSignal(str)
     error = pyqtSignal(str)
 
-    def __init__(self, model, pdf_path, file_format, status_callback):
+    def __init__(self, model, pdf_path, file_format, status_callback, target_language):
         super().__init__()
         self.model = model
         self.pdf_path = pdf_path
         self.file_format = file_format
         self.status_callback = status_callback
+        self.target_language = target_language
 
     def run(self):
         try:
@@ -31,9 +32,10 @@ class TranslatorThread(QThread):
             translator = PDFTranslator(self.model)
             translated_text = translator.translate_pdf(
                 self.pdf_path, 
-                self.file_format
+                self.file_format,
+                self.target_language
             )
-            update_status("翻译完成！")
+            update_status(f"翻译完成！目标语言：{self.target_language}")
             self.finished.emit(translated_text)
         except Exception as e:
             self.error.emit(str(e))
@@ -226,6 +228,15 @@ class TranslatorGUI(QMainWindow):
         pdf_layout.addWidget(self.pdf_browse_btn)
         file_layout.addLayout(pdf_layout)
 
+        # Target language selection
+        language_layout = QHBoxLayout()
+        language_layout.addWidget(QLabel("Target Language:"))
+        self.language_combo = QComboBox()
+        self.language_combo.addItems(["中文", "法语 (French)", "日语 (Japanese)"])
+        self.language_combo.setCurrentText("中文")
+        language_layout.addWidget(self.language_combo)
+        file_layout.addLayout(language_layout)
+
         # Output format
         format_layout = QHBoxLayout()
         format_layout.addWidget(QLabel("Output Format:"))
@@ -325,12 +336,12 @@ class TranslatorGUI(QMainWindow):
         
         # Validate inputs
         if not self.pdf_path_input.text():
-            QMessageBox.warning(self, "Error", "Please select a PDF file")
+            QMessageBox.warning(self, "错误", "请选择PDF文件")
             return
 
         if self.model_type_combo.currentText() == "OpenAIModel":
             if not self.api_key_input.text():
-                QMessageBox.warning(self, "Error", "Please enter OpenAI API key")
+                QMessageBox.warning(self, "错误", "请输入OpenAI API密钥")
                 return
             model = OpenAIModel(
                 model=self.model_name_input.text(),
@@ -338,9 +349,12 @@ class TranslatorGUI(QMainWindow):
             )
         else:
             if not self.glm_url_input.text():
-                QMessageBox.warning(self, "Error", "Please enter GLM URL")
+                QMessageBox.warning(self, "错误", "请输入GLM URL")
                 return
             model = GLMModel()
+
+        # Get target language (only take the first part, e.g., "中文" from "中文 (Chinese)")
+        target_language = self.language_combo.currentText().split(" ")[0]
 
         # Disable UI elements
         self.translate_btn.setEnabled(False)
@@ -352,7 +366,8 @@ class TranslatorGUI(QMainWindow):
             model,
             self.pdf_path_input.text(),
             self.format_combo.currentText(),
-            lambda msg: self.status_text.append(msg)
+            lambda msg: self.status_text.append(msg),
+            target_language
         )
         self.translator_thread.progress.connect(self.update_status)
         self.translator_thread.finished.connect(self.translation_finished)

@@ -2,11 +2,22 @@ from ai_translator.book import ContentType
 
 class Model:
     def make_text_prompt(self, text: str, target_language: str) -> str:
-        return f"翻译为{target_language}：{text}"
+        language_prompts = {
+            "中文": "翻译为中文：",
+            "法语": "Translate to French:",
+            "日语": "翻訳を日本語に："
+        }
+        prompt = language_prompts.get(target_language, f"翻译为{target_language}：")
+        return f"{prompt}{text}"
 
     def make_table_prompt(self, table: str, target_language: str) -> str:
-        # return f"翻译为{target_language}，保持间距（空格，分隔符），以表格形式返回：\n{table}"
-        return f"翻译为{target_language}，以空格和换行符表示表格：\n{table}"
+        language_prompts = {
+            "中文": "翻译为中文，保持表格格式：",
+            "法语": "Translate to French, maintain table format:",
+            "日语": "翻訳を日本語に、表の形式を維持："
+        }
+        prompt = language_prompts.get(target_language, f"翻译为{target_language}，保持表格格式：")
+        return f"{prompt}\n{table}"
 
     def translate_prompt(self, content, target_language: str) -> str:
         if content.content_type == ContentType.TEXT:
