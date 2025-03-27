@@ -371,7 +371,8 @@ class TranslatorGUI(QMainWindow):
         self.progress_bar.setMaximum(100)
         self.progress_bar.setValue(100)
         self.translation_text.setText(translated_text)
-        QMessageBox.information(self, "Success", "Translation completed!")
+        self.status_text.append("翻译完成！")
+        QMessageBox.information(self, "成功", "翻译已完成！")
 
     def translation_error(self, error_message):
         self.translate_btn.setEnabled(True)
