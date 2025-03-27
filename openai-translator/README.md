@@ -26,6 +26,11 @@ The OpenAI Translator is still in its early stages of development, and I'm activ
     <em>"The Old Man and the Sea"</em>
 </p>
 
+![The Test](images/sample_test.png)
+<p align="center">
+    <em>"Test Multiply Language Support"</em>
+</p>
+
 ## Features
 
 - [X] Translation of English PDF books to Chinese using LLMs.
@@ -33,10 +38,10 @@ The OpenAI Translator is still in its early stages of development, and I'm activ
 - [X] Flexible configuration through a YAML file or command-line arguments.
 - [X] Timeouts and error handling for robust translation operations.
 - [X] Modular and object-oriented design for easy customization and extension.
-- [ ] Implement a graphical user interface (GUI) for easier use.
+- [X] Implement a graphical user interface (GUI) for easier use.
 - [ ] Add support for batch processing of multiple PDF files.
 - [ ] Create a web service or API to enable usage in web applications.
-- [ ] Add support for other languages and translation directions.
+- [X] Add support for other languages and translation directions.
 - [ ] Add support for preserving the original layout and formatting of the source PDF.
 - [ ] Improve translation quality by using custom-trained translation models.
 
