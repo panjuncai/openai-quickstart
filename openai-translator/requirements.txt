@@ -7,3 +7,4 @@ pillow
 reportlab
 pandas
 loguru
+PyQt6

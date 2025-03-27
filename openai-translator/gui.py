@@ -6,29 +6,34 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                             QGroupBox, QProgressBar, QSplitter)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtGui import QPalette, QColor, QFont
-from model import OpenAIModel, GLMModel
-from translator import PDFTranslator
-from utils import LOG
+from ai_translator.model import OpenAIModel, GLMModel
+from ai_translator.translator import PDFTranslator
+from ai_translator.utils import LOG
 
 class TranslatorThread(QThread):
     progress = pyqtSignal(str)
     finished = pyqtSignal(str)
     error = pyqtSignal(str)
 
-    def __init__(self, model, pdf_path, file_format):
+    def __init__(self, model, pdf_path, file_format, status_callback):
         super().__init__()
         self.model = model
         self.pdf_path = pdf_path
         self.file_format = file_format
+        self.status_callback = status_callback
 
     def run(self):
         try:
+            def update_status(msg):
+                self.status_callback(msg)
+                self.progress.emit(msg)
+
             translator = PDFTranslator(self.model)
             translated_text = translator.translate_pdf(
                 self.pdf_path, 
-                self.file_format,
-                progress_callback=lambda text: self.progress.emit(text)
+                self.file_format
             )
+            update_status("翻译完成！")
             self.finished.emit(translated_text)
         except Exception as e:
             self.error.emit(str(e))
@@ -346,7 +351,8 @@ class TranslatorGUI(QMainWindow):
         self.translator_thread = TranslatorThread(
             model,
             self.pdf_path_input.text(),
-            self.format_combo.currentText()
+            self.format_combo.currentText(),
+            lambda msg: self.status_text.append(msg)
         )
         self.translator_thread.progress.connect(self.update_status)
         self.translator_thread.finished.connect(self.translation_finished)

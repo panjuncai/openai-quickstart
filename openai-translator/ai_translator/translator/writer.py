@@ -7,8 +7,8 @@ from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
 )
 
-from book import Book, ContentType
-from utils import LOG
+from ai_translator.book import Book, ContentType
+from ai_translator.utils import LOG
 
 class Writer:
     def __init__(self):
@@ -30,7 +30,8 @@ class Writer:
         LOG.info(f"开始翻译: {output_file_path}")
 
         # Register Chinese font
-        font_path = "../fonts/simsun.ttc"  # 请将此路径替换为您的字体文件路径
+        current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        font_path = os.path.join(current_dir, "fonts", "simsun.ttc")
         pdfmetrics.registerFont(TTFont("SimSun", font_path))
 
         # Create a new ParagraphStyle with the SimSun font
