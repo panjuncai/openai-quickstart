@@ -178,3 +178,4 @@ log.txt
 openai-translator/config.yaml
 .DS_Store
 openai-translator/config.yaml
+*.txt
