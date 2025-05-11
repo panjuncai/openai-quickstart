@@ -375,23 +375,25 @@ class AutoGPTTool:
                     submit_button = gr.Button("提交", variant="primary")
                     clear_button = gr.Button("清空")
             
+            # 将示例放在这里，显示为一行
+            with gr.Row():
+                gr.Examples(
+                    examples=[
+                        "国内最新经济政策",
+                        "中国航天最新进展",
+                        "人工智能在医疗领域的应用",
+                        "国内体育赛事最新消息",
+                        "环保政策的最新动态",
+                    ],
+                    inputs=query_input,
+                    label="示例点击",
+                )
+            
             # 结果显示
             result_output = gr.Textbox(
                 lines=15,
                 label="答案",
                 placeholder="结果将显示在这里...",
-            )
-            
-            # 点击示例
-            examples = gr.Examples(
-                examples=[
-                    ["国内最新经济政策"],
-                    ["中国航天最新进展"],
-                    ["人工智能在医疗领域的应用"],
-                    ["国内体育赛事最新消息"],
-                    ["环保政策的最新动态"],
-                ],
-                inputs=query_input,
             )
             
             # 定义处理函数
