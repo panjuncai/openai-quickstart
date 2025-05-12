@@ -12,7 +12,7 @@ class TranslationConfig:
     def initialize(self, args):
         with open(args.config_file, "r") as f:
             config = yaml.safe_load(f)
-
+        
         # Use the argparse Namespace to update the configuration
         overridden_values = {
             key: value for key, value in vars(args).items() if key in config and value is not None

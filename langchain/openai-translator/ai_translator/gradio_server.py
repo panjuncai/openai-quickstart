@@ -32,7 +32,13 @@ def launch_gradio():
         allow_flagging="never"
     )
 
-    iface.launch(share=True, server_name="0.0.0.0")
+    # iface.launch(share=True, server_name="0.0.0.0")
+    iface.launch(
+        server_name="127.0.0.1",
+        server_port=7860,
+        share=False,               # 将这里改为 False
+        debug=True
+    )
 
 def initialize_translator():
     # 解析命令行
